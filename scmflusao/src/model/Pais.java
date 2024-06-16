@@ -3,12 +3,13 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 
+import model.Agente.StatusPais;
+
 public class Pais {
 	private int id;
 	private String nome;
 	private String sigla;
-	//TODO: adicionar enum de situacao
-	private String situacao;
+	private StatusPais situacao;
 	private List<Cidade> cidades;
 
 	public Pais(int id, String nome, String sigla)
@@ -17,7 +18,12 @@ public class Pais {
 		this.nome = nome;
 		this.sigla = sigla;
 		this.cidades = new ArrayList<>();
-		this.setSituacao("Ativo");
+		this.setSituacao(StatusPais.ATIVO);
+	}
+	
+	public static enum StatusPais {
+		ATIVO,
+		BLOQUEADO
 	}
 	
 	/**
@@ -59,18 +65,25 @@ public class Pais {
         return cidades;
     }
 	
-	//TODO: adicionar lancamento de exception para caso a cidade esteja bloqueada.
-	public void adicionarCidade(Cidade cidade) {
+	public void adicionarCidade(Cidade cidade) throws ModelException {
+		if (cidade == null) {
+			throw new ModelException("A cidade não pode ser nula.");
+		}  
+		
+		if (cidade.getSituacao() != Cidade.StatusCidade.ATIVO) {
+			throw new ModelException("A cidade deve ter o status ativo.");
+		}
+		
         if (!cidades.contains(cidade)) {
             this.cidades.add(cidade);
         }
     }
 
-	public String getSituacao() {
+	public StatusPais getSituacao() {
 		return situacao;
 	}
 
-	public void setSituacao(String situacao) {
+	public void setSituacao(StatusPais situacao) {
 		this.situacao = situacao;
 	}
 }

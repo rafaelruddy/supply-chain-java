@@ -3,21 +3,27 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 
+import model.Agente.StatusEmpresaParceira;
+
 public class EmpresaParceira {
 	private int id;
 	private String nome;
 	private String cnpj;
-	//TODO: adicionar enum de situacao
-	private String situacao;
+	private StatusEmpresaParceira situacao;
 	private List<Agente> agentes;
-	
+
 	public EmpresaParceira(int id, String nome, String cnpj) {
 		this.id = id;
 		this.nome = nome;
 		this.cnpj = cnpj;
 		this.agentes = new ArrayList<>();
-		this.setSituacao("Ativo");
+		this.setSituacao(StatusEmpresaParceira.ATIVO);
 	}
+
+	public static enum StatusEmpresaParceira {
+		ATIVO, BLOQUEADO
+	}
+
 	/**
 	 * @return the id
 	 */
@@ -31,35 +37,47 @@ public class EmpresaParceira {
 	public String getNome() {
 		return nome;
 	}
+
 	/**
 	 * @param nome the nome to set
 	 */
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
+
 	/**
 	 * @return the cnpj
 	 */
 	public String getCnpj() {
 		return cnpj;
 	}
+
 	/**
 	 * @param cnpj the cnpj to set
 	 */
 	public void setCnpj(String cnpj) {
 		this.cnpj = cnpj;
 	}
-	public String getSituacao() {
+
+	public StatusEmpresaParceira getSituacao() {
 		return situacao;
 	}
-	public void setSituacao(String situacao) {
+
+	public void setSituacao(StatusEmpresaParceira situacao) {
 		this.situacao = situacao;
 	}
-	
-	//TODO: adicionar lancamento de exception para caso o agente esteja bloqueado.
-	public void adicionarAgente(Agente agente) {
-        if (!agentes.contains(agente)) {
-            this.agentes.add(agente);
-        }
-    }
+
+	public void adicionarAgente(Agente agente) throws ModelException {
+		if (agente == null) {
+			throw new ModelException("O agente não pode ser nulo.");
+		}
+
+		if (agente.getSituacao() != Agente.StatusAgente.ATIVO) {
+			throw new ModelException("O agente deve ter o status ativo.");
+		}
+
+		if (!agentes.contains(agente)) {
+			this.agentes.add(agente);
+		}
+	}
 }

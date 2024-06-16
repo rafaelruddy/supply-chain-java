@@ -3,13 +3,14 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 
+import model.Agente.StatusProduto;
+
 public class Produto {
 	private int id;
 	private String nome;
 	private String descricao;
 	private double preco;
-	//TODO: adicionar enum de situacao
-	private String situacao;
+	private StatusProduto situacao;
 	private Cidade cidade;
 	private List<Item> itens;
 
@@ -21,9 +22,16 @@ public class Produto {
 		this.preco = preco;
 		this.itens = new ArrayList<>();
 		this.setCidade(cidade);
-		this.setSituacao("Ativo");
+		this.setSituacao(StatusProduto.EM_ANÁLISE);
 	}
 
+	public static enum StatusProduto {
+		EM_ANÁLISE,
+		REPROVADO,
+		ATIVO,
+		BLOQUEADO
+	}
+	
 	/**
 	 * @return the id
 	 */
@@ -76,19 +84,26 @@ public class Produto {
 	/**
 	 * @return the situacao
 	 */
-	public String getSituacao() {
+	public StatusProduto getSituacao() {
 		return situacao;
 	}
 
 	/**
 	 * @param situacao the situacao to set
 	 */
-	public void setSituacao(String situacao) {
+	public void setSituacao(StatusProduto situacao) {
 		this.situacao = situacao;
 	}
-	
-	//TODO: adicionar lancamento de exception para caso o item esteja bloqueado.
-	public void adicionarItem(Item item) {
+	 
+	public void adicionarItem(Item item) throws ModelException {
+		if (item == null) {
+			throw new ModelException("O item não pode ser nulo.");
+		}
+
+		if (item.getSituacao() != Item.StatusItem.ATIVO) {
+			throw new ModelException("O produto deve ter o status ativo.");
+		}
+		
         if (!itens.contains(item)) {
             this.itens.add(item);
         }

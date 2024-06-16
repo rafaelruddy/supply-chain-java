@@ -5,8 +5,7 @@ public class Agente {
 	private String nome;
 	private String codigo;
 	private String cpf;
-	//TODO: adicionar enum de situacao
-	private String situacao;
+	private StatusAgente situacao;
 	private EmpresaParceira empresa;
 	
 	public Agente(int id, String nome, String codigo, String cpf, EmpresaParceira empresa)  throws ModelException {
@@ -14,8 +13,14 @@ public class Agente {
 		this.nome = nome;
 		this.codigo = codigo;
 		this.cpf = cpf;
-		this.setSituacao("Ativo");
+		this.setSituacao(StatusAgente.ATIVO);
 		this.setEmpresa(empresa);
+	}
+	
+	public static enum StatusAgente {
+		ATIVO,
+		BLOQUEADO,
+		ALOCADO
 	}
 	
 	/**
@@ -65,13 +70,13 @@ public class Agente {
 	/**
 	 * @return the situacao
 	 */
-	public String getSituacao() {
+	public StatusAgente getSituacao() {
 		return situacao;
 	}
 	/**
 	 * @param situacao the situacao to set
 	 */
-	public void setSituacao(String situacao) {
+	public void setSituacao(StatusAgente situacao) {
 		this.situacao = situacao;
 	}
 
@@ -83,6 +88,11 @@ public class Agente {
 		if (empresa == null) {
 			throw new ModelException("A cidade deve pertencer a um país.");
 		}
+		
+		if (empresa.getSituacao() != EmpresaParceira.StatusEmpresaParceira.ATIVO) {
+			throw new ModelException("A empresa parceira deve ter o status ativo.");
+		}
+		
 		this.empresa = empresa;
 		empresa.adicionarAgente(this);
 	}

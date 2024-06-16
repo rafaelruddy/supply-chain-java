@@ -3,13 +3,14 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 
+import model.Agente.StatusCidade;
+
 public class Cidade {
 	private int id;
 	private String nome;
 	private String estado;
 	private Pais pais;
-	//TODO: adicionar enum de situacao
-	private String situacao;
+	private StatusCidade situacao;
 	private List<Armazem> armazens;
 	private List<Produto> produtos;
 
@@ -20,7 +21,11 @@ public class Cidade {
 		this.armazens = new ArrayList<>();
 		this.produtos = new ArrayList<>();
 		this.setPais(pais);
-		this.setSituacao("Ativo");
+		this.setSituacao(StatusCidade.ATIVO);
+	}
+
+	public static enum StatusCidade {
+		ATIVO, BLOQUEADO
 	}
 
 	/**
@@ -57,14 +62,35 @@ public class Cidade {
 	}
 
 	// Método para adicionar um armazém
-	public void adicionarArmazem(Armazem armazem) {
+	public void adicionarArmazem(Armazem armazem) throws ModelException {
+		if (armazem == null) {
+			throw new ModelException("O armazem não pode ser nulo.");
+		}
+
+		if (armazem.getSituacao() != Armazem.StatusArmazem.ATIVO) {
+			throw new ModelException("O armazem deve ter o status ativo.");
+		}
+
+		if (this.getSituacao() != Cidade.StatusCidade.ATIVO
+				&& this.getPais().getSituacao() != Pais.StatusPais.ATIVO) {
+			throw new ModelException("A cidade e o país devem ter o status ativo.");
+		}
+
 		if (!armazens.contains(armazem)) {
 			this.armazens.add(armazem);
 		}
 	}
-	
+
 	// Método para adicionar um armazém
-	public void adicionarProduto(Produto produto) {
+	public void adicionarProduto(Produto produto) throws ModelException {
+		if (produto == null) {
+			throw new ModelException("O produto não pode ser nulo.");
+		}
+
+		if (produto.getSituacao() != Produto.StatusProduto.ATIVO) {
+			throw new ModelException("O produto deve ter o status ativo.");
+		}
+
 		if (!produtos.contains(produto)) {
 			this.produtos.add(produto);
 		}
@@ -74,20 +100,24 @@ public class Cidade {
 		return pais;
 	}
 
-	//TODO: adicionar lancamento de exception para caso o pais esteja bloqueado.
 	public void setPais(Pais pais) throws ModelException {
 		if (pais == null) {
-			throw new ModelException("A cidade deve pertencer a um país.");
+			throw new ModelException("O país não pode ser nulo.");
 		}
+
+		if (pais.getSituacao() != Pais.StatusPais.ATIVO) {
+			throw new ModelException("O país deve ter o status ativo.");
+		}
+
 		this.pais = pais;
 		pais.adicionarCidade(this);
 	}
 
-	public String getSituacao() {
+	public StatusCidade getSituacao() {
 		return situacao;
 	}
 
-	public void setSituacao(String situacao) {
+	public void setSituacao(StatusCidade situacao) {
 		this.situacao = situacao;
 	}
 

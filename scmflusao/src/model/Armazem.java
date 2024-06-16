@@ -5,8 +5,7 @@ public class Armazem {
 	private String nome;
 	private String endereco;
 	private Cidade cidade;
-	//TODO: adicionar enum de situacao
-	private String situacao;
+	private StatusArmazem situacao;
 	
 
 	public Armazem(int id, String nome, String endereco, Cidade cidade) throws ModelException{
@@ -14,7 +13,12 @@ public class Armazem {
 		this.nome = nome;
 		this.endereco = endereco;
 		this.setCidade(cidade);
-		this.setSituacao("Ativo");
+		this.setSituacao(StatusArmazem.ATIVO);
+	}
+	
+	public static enum StatusArmazem {
+		ATIVO,
+		BLOQUEADO
 	}
 
 	/**
@@ -66,11 +70,13 @@ public class Armazem {
 		cidade.adicionarArmazem(this); 
 	}
 
-	public String getSituacao() {
+	public StatusArmazem getSituacao() {
 		return situacao;
 	}
+	
+	
 
-	public void setSituacao(String situacao) {
+	public void setSituacao(StatusArmazem situacao) {
 		this.situacao = situacao;
 	}
 

@@ -1,20 +1,28 @@
 package model;
 
+
 public class Item {
 	private int id;
 	private String nome;
 	private String descricao;
 	private double preco;
-	//TODO: adicionar enum de situacao
-	private String situacao;
+	private StatusItem situacao;
 	
 	public Item(int id, String nome, String descricao, double preco) {
 		this.id = id;
 		this.nome = nome;
 		this.descricao = descricao;
 		this.preco = preco;
-		this.setSituacao("Ativo");
+		this.setSituacao(StatusItem.EM_ANÁLISE);
 	}
+	
+	public static enum StatusItem {
+		EM_ANÁLISE,
+		REPROVADO,
+		ATIVO,
+		BLOQUEADO
+	}
+	
 	/**
 	 * @return the id
 	 */
@@ -58,10 +66,10 @@ public class Item {
 	public void setPreco(double preco) {
 		this.preco = preco;
 	}
-	public String getSituacao() {
+	public StatusItem getSituacao() {
 		return situacao;
 	}
-	public void setSituacao(String situacao) {
+	public void setSituacao(StatusItem situacao) {
 		this.situacao = situacao;
 	}
 }
